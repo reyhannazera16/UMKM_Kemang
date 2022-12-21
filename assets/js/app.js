@@ -1,7 +1,7 @@
 var config = {
-  geojson: "https://web.fulcrumapp.com/shares/a5c8e07368efde43.geojson",
-  title: "Congress Park Trees",
-  layerName: "Trees",
+  geojson: "https://raw.githubusercontent.com/reyhannazera16/geojson/main/Data_UMKM_Tegal.geojson",
+  title: "Kemang",
+  layerName: "UMKM",
   hoverProperty: "species_sim",
   sortProperty: "dbh_2012_inches_diameter_at_breast_height_46",
   sortOrder: "desc"
@@ -20,8 +20,8 @@ var properties = [{
   info: false
 },
 {
-  value: "status",
-  label: "Status",
+  value: "NAMA_UMKM",
+  label: "Nama UMKM",
   table: {
     visible: true,
     sortable: true
@@ -36,8 +36,8 @@ var properties = [{
   }
 },
 {
-  value: "congress_park_inventory_zone",
-  label: "Inventory Zone",
+  value: "NAMA",
+  label: "Nama",
   table: {
     visible: true,
     sortable: true
@@ -52,19 +52,8 @@ var properties = [{
   }
 },
 {
-  value: "2012_inventory_number",
-  label: "Inventory Number",
-  table: {
-    visible: true,
-    sortable: true
-  },
-  filter: {
-    type: "integer"
-  }
-},
-{
-  value: "species_sim",
-  label: "Species",
+  value: "ALAMAT",
+  label: "Alamat",
   table: {
     visible: true,
     sortable: true
@@ -74,30 +63,41 @@ var properties = [{
   }
 },
 {
-  value: "circumference_2012_inches_at_breast_height_",
-  label: "Circumference (inches)",
+  value: "TELEPON_HP",
+  label: "Telepon",
   table: {
     visible: true,
     sortable: true
   },
   filter: {
-    type: "integer"
+    type: "string"
   }
 },
 {
-  value: "dbh_2012_inches_diameter_at_breast_height_46",
-  label: "DBH (inches)",
+  value: "KECAMATAN",
+  label: "Kecamatan",
   table: {
     visible: true,
     sortable: true
   },
   filter: {
-    type: "integer"
+    type: "string"
   }
 },
 {
-  value: "plaque",
-  label: "Plaque",
+  value: "PRODUK",
+  label: "produk",
+  table: {
+    visible: true,
+    sortable: true
+  },
+  filter: {
+    type: "string"
+  }
+},
+{
+  value: "KELURAHAN",
+  label: "kelurahan",
   table: {
     visible: true,
     sortable: true
@@ -310,7 +310,7 @@ function buildConfig() {
 }
 
 // Basemap Layers
-var mapboxOSM = L.tileLayer("https://{s}.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZnVsY3J1bSIsImEiOiJjaXI1MHZnNGcwMW41ZnhucjNkOTB1cncwIn0.4ZADnELXGBXsN_RxnPK3Sw", {
+var mapboxOSM = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   subdomains: ["a", "b", "c", "d"],
   attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
