@@ -1,11 +1,10 @@
 var config = {
-  geojson: "https://raw.githubusercontent.com/reyhannazera16/geojson/main/Data_UMKM_Tegal.geojson",
+  geojson: "https://raw.githubusercontent.com/reyhannazera16/geojson/main/UMKM.geojson",
   title: "Kemang",
   layerName: "UMKM",
-  hoverProperty: "species_sim",
-  sortProperty: "dbh_2012_inches_diameter_at_breast_height_46",
-  sortOrder: "desc"
+
 };
+
 
 var properties = [{
   value: "fulcrum_id",
@@ -16,28 +15,13 @@ var properties = [{
   },
   filter: {
     type: "string"
+    
   },
   info: false
 },
 {
   value: "NAMA_UMKM",
   label: "Nama UMKM",
-  table: {
-    visible: true,
-    sortable: true
-  },
-  filter: {
-    type: "string",
-    input: "checkbox",
-    vertical: true,
-    multiple: true,
-    operators: ["in", "not_in", "equal", "not_equal"],
-    values: []
-  }
-},
-{
-  value: "NAMA",
-  label: "Nama",
   table: {
     visible: true,
     sortable: true
@@ -59,12 +43,18 @@ var properties = [{
     sortable: true
   },
   filter: {
-    type: "string"
+    type: "string",
+    input: "checkbox",
+    vertical: true,
+    multiple: true,
+    operators: ["in", "not_in", "equal", "not_equal"],
+    values: []
   }
 },
+
 {
-  value: "TELEPON_HP",
-  label: "Telepon",
+  value: "JENIS_UMKM",
+  label: "Jenis UMKM",
   table: {
     visible: true,
     sortable: true
@@ -84,20 +74,10 @@ var properties = [{
     type: "string"
   }
 },
-{
-  value: "PRODUK",
-  label: "produk",
-  table: {
-    visible: true,
-    sortable: true
-  },
-  filter: {
-    type: "string"
-  }
-},
+
 {
   value: "KELURAHAN",
-  label: "kelurahan",
+  label: "Kelurahan",
   table: {
     visible: true,
     sortable: true
@@ -112,32 +92,12 @@ var properties = [{
     }
   }
 },
-{
-  value: "notes_other_information",
-  label: "Notes",
-  table: {
-    visible: false,
-    sortable: true
-  },
-  filter: {
-    type: "string"
-  }
-},
-{
-  value: "photos_url",
-  label: "Photos",
-  table: {
-    visible: true,
-    sortable: true,
-    formatter: urlFormatter
-  },
-  filter: false
-}];
+];
 
 function drawCharts() {
   // Status
   $(function() {
-    var result = alasql("SELECT status AS label, COUNT(*) AS total FROM ? GROUP BY status", [features]);
+    var result = alasql("SELECT PRODUK AS label, COUNT(*) AS total FROM ? GROUP BY PRODUK", [features]);
     var columns = $.map(result, function(status) {
       return [[status.label, status.total]];
     });
@@ -151,8 +111,8 @@ function drawCharts() {
   });
 
   // Zones
-  $(function() {
-    var result = alasql("SELECT congress_park_inventory_zone AS label, COUNT(*) AS total FROM ? GROUP BY congress_park_inventory_zone", [features]);
+   $(function() {
+    var result = alasql("SELECT KELURAHAN AS label, COUNT(*) AS total FROM ? GROUP BY KELURAHAN", [features]);
     var columns = $.map(result, function(zone) {
       return [[zone.label, zone.total]];
     });
@@ -165,7 +125,7 @@ function drawCharts() {
     });
   });
 
-  // Size
+      // Size
   $(function() {
     var sizes = [];
     var regeneration = alasql("SELECT 'Regeneration (< 3\")' AS category, COUNT(*) AS total FROM ? WHERE CAST(dbh_2012_inches_diameter_at_breast_height_46 as INT) < 3", [features]);
@@ -187,9 +147,10 @@ function drawCharts() {
     });
   });
 
+
   // Species
   $(function() {
-    var result = alasql("SELECT species_sim AS label, COUNT(*) AS total FROM ? GROUP BY species_sim ORDER BY label ASC", [features]);
+    var result = alasql("SELECT PRODUK AS label, COUNT(*) AS total FROM ? GROUP BY PRODUK ORDER BY label ASC", [features]);
     var chart = c3.generate({
         bindto: "#species-chart",
         size: {
@@ -215,6 +176,7 @@ function drawCharts() {
     });
   });
 }
+
 
 $(function() {
   $(".title").html(config.title);
@@ -255,6 +217,7 @@ function buildConfig() {
     }
   }];
 
+  
 
 
   $.each(properties, function(index, value) {
@@ -316,11 +279,14 @@ var mapboxOSM = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
 });
 
-var mapboxSat = L.tileLayer("https://{s}.tiles.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZnVsY3J1bSIsImEiOiJjaXI1MHZnNGcwMW41ZnhucjNkOTB1cncwIn0.4ZADnELXGBXsN_RxnPK3Sw", {
+var mapboxSat = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw", {
   maxZoom: 19,
   subdomains: ["a", "b", "c", "d"],
   attribution: 'Basemap <a href="https://www.mapbox.com/about/maps/" target="_blank">© Mapbox © OpenStreetMap</a>'
 });
+
+
+
 
 var highlightLayer = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
@@ -356,8 +322,8 @@ var featureLayer = L.geoJson(null, {
     };
   },*/
   pointToLayer: function (feature, latlng) {
-    if (feature.properties && feature.properties["marker-color"]) {
-      markerColor = feature.properties["marker-color"];
+    if (feature.properties && feature.properties["marker_col"]) {
+      markerColor = feature.properties["marker_col"];
     } else {
       markerColor = "#FF0000";
     }
@@ -437,10 +403,10 @@ if (document.body.clientWidth <= 767) {
 }
 var baseLayers = {
   "Street Map": mapboxOSM,
-  "Aerial Imagery": mapboxSat
 };
 var overlayLayers = {
   "<span id='layer-name'>GeoJSON Layer</span>": featureLayer
+  
 };
 var layerControl = L.control.layers(baseLayers, overlayLayers, {
   collapsed: isCollapsed
